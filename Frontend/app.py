@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-# Backend API URL (change if needed)
+# ✅ Correct API URL (NO /api if not using prefix)
 API_URL = "http://127.0.0.1:8000/tailor-resume"
 
 st.set_page_config(page_title="AI Resume Tailor", layout="centered")
@@ -21,7 +21,6 @@ if st.button("🚀 Tailor Resume"):
 
         with st.spinner("Processing..."):
 
-            # Prepare file + data for API
             files = {
                 "file": (uploaded_file.name, uploaded_file, "application/pdf")
             }
@@ -32,13 +31,20 @@ if st.button("🚀 Tailor Resume"):
             try:
                 response = requests.post(API_URL, files=files, data=data)
 
+                # 🔍 DEBUG (IMPORTANT)
+                st.write("🔍 Raw Response:", response.json())
+
                 if response.status_code == 200:
-                    result = response.json().get("tailored_resume")
+                    result = response.json().get("ai_output")
 
                     st.success("✅ Resume Tailored Successfully!")
 
-                    st.subheader("✨ Tailored Resume")
-                    st.text_area("Result", result, height=400)
+                    # ❌ If no result
+                    if not result:
+                        st.error("❌ No AI output received")
+                    else:
+                        st.subheader("✨ Tailored Resume")
+                        st.markdown(result)   # ✅ Better formatting
 
                 else:
                     st.error(f"❌ Error: {response.text}")
