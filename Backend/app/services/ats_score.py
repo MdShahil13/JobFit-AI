@@ -53,6 +53,20 @@ def calculate_ats_score(resume, job_desc):
 
     return round(score, 2)
 
+# Matched keywords (Skills found in both)
+def get_matched_skills(resume, job_desc):
+    resume_words = clean_text(resume)
+    resume_text = " ".join(resume_words)
+
+    jd_keywords = extract_keywords(job_desc)
+
+    matched = []
+    for keyword in jd_keywords:
+        if keyword in resume_text:
+            matched.append(keyword)
+
+    return matched[:20]
+
 # Missing keywords
 def get_missing_keywords(resume, job_desc):
     resume_words = clean_text(resume)
