@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 
-# ✅ Correct API URL (NO /api if not using prefix)
 API_URL = "http://127.0.0.1:8000/tailor-resume"
 
 st.set_page_config(page_title="AI Resume Tailor", layout="centered")
@@ -31,20 +30,36 @@ if st.button("🚀 Tailor Resume"):
             try:
                 response = requests.post(API_URL, files=files, data=data)
 
-                # 🔍 DEBUG (IMPORTANT)
-                st.write("🔍 Raw Response:", response.json())
-
                 if response.status_code == 200:
-                    result = response.json().get("ai_output")
+                    result = response.json()   # ✅ direct response (no ai_output)
 
                     st.success("✅ Resume Tailored Successfully!")
 
-                    # ❌ If no result
-                    if not result:
-                        st.error("❌ No AI output received")
-                    else:
-                        st.subheader("✨ Tailored Resume")
-                        st.markdown(result)   # ✅ Better formatting
+                    # ---- Display Results ----
+                    st.subheader("✨ Tailored Resume")
+
+                    # Matched Skills
+                    st.markdown("### ✅ Matched Skills")
+                    st.write(", ".join(result.get("matched_skills", [])))
+
+                    # Missing Skills
+                    st.markdown("### ❌ Missing Skills")
+                    st.write(", ".join(result.get("missing_skills", [])))
+
+                    # ATS Score
+                    st.markdown("### 📊 ATS Score")
+                    st.progress(result.get("ats_score", 0) / 100)
+                    st.write(f"{result.get('ats_score', 0)}%")
+
+                    # Suggestions
+                    st.markdown("### 💡 Suggestions")
+                    for s in result.get("suggestions", []):
+                        st.write(f"- {s}")
+
+                    # Improved Points
+                    st.markdown("### ✨ Improved Resume Points")
+                    for p in result.get("improved_points", []):
+                        st.write(f"- {p}")
 
                 else:
                     st.error(f"❌ Error: {response.text}")

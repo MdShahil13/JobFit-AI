@@ -12,9 +12,7 @@ async def tailor_resume(
     # Step 1: Extract text
     resume_text = extract_text_from_pdf(file)
 
-    # Step 2: Call AI (IMPORTANT 🔥)
-    ai_output = analyze_resume(resume_text, job_description)
+    # Step 2: Call AI
+    result = analyze_resume(resume_text, job_description)
 
-    return {
-        "ai_output": ai_output
-    }
+    return result   # ✅ directly return clean JSON
